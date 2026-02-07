@@ -24,7 +24,12 @@ jobs:
       - name: Check for errors (Static Analysis)
         run: flutter analyze
 
-      # ลบส่วน flutter test ออกไปแล้ว เพื่อไม่ให้ Error หาโฟลเดอร์ไม่เจอ
-      
       - name: Build APK
         run: flutter build apk --debug
+
+      # ส่วนที่เพิ่มเข้ามาเพื่อให้มีไฟล์ให้ดาวน์โหลด
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
