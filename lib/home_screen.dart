@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// 1. Data Model
 class PasswordEntry {
   final String title;
   final String username;
@@ -25,7 +24,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<PasswordEntry> _passwords = [];
 
-  // ฟังก์ชันแสดง Dialog
   void _showAddDialog() {
     final titleController = TextEditingController();
     final userController = TextEditingController();
@@ -75,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // แก้ไข Error: ย้ายมาไว้ใน Class และทำให้สมบูรณ์
   Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
     return TextField(
       controller: controller,
@@ -115,8 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // ใช้สีแบบดั้งเดิมถ้า withValues มีปัญหาในบางเครื่อง
-                  Icon(Icons.vpn_key_outlined, size: 80, color: Colors.white.withOpacity(0.1)),
+                  Icon(Icons.vpn_key_outlined, size: 80, color: Colors.white.withValues(alpha: 0.1)),
                   const SizedBox(height: 16),
                   const Text("No passwords saved yet.", style: TextStyle(color: Colors.white24)),
                 ],

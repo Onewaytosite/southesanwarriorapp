@@ -16,7 +16,7 @@ class PasswordApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF1C1E26),
-        useMaterial3: true, // ใช้มาตรฐาน Material 3
+        useMaterial3: true,
       ),
       home: const PinScreen(),
     );

@@ -38,7 +38,7 @@ class _PinScreenState extends State<PinScreen> {
             const SizedBox(height: 80),
             const Text(
               "ENTER PIN",
-              style: TextStyle(fontSize: 20, letterSpacing: 4, fontWeight: FontWeight.w300, color: Colors.white),
+              style: TextStyle(fontSize: 20, letterSpacing: 4, fontWeight: FontWeight.w300),
             ),
             const SizedBox(height: 60),
             Row(
@@ -93,7 +93,7 @@ class _PinScreenState extends State<PinScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white12),
-            color: Colors.white.withValues(alpha: 0.05), // แก้ตามมาตรฐานปี 2026
+            color: Colors.white.withValues(alpha: 0.05),
           ),
           child: Center(
             child: Text(text, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w300)),
