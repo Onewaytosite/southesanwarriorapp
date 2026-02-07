@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
+// 1. Data Model พร้อมฟังก์ชันแปลงเป็น JSON
 class PasswordEntry {
   final String title;
   final String username;
@@ -12,6 +15,20 @@ class PasswordEntry {
     required this.password,
     this.isVisible = false,
   });
+
+  // แปลงจาก Object เป็น Map เพื่อเซฟลงเครื่อง
+  Map<String, dynamic> toMap() => {
+    'title': title,
+    'username': username,
+    'password': password,
+  };
+
+  // แปลงจาก Map กลับเป็น Object ตอนโหลดข้อมูล
+  factory PasswordEntry.fromMap(Map<String, dynamic> map) => PasswordEntry(
+    title: map['title'] ?? '',
+    username: map['username'] ?? '',
+    password: map['password'] ?? '',
+  );
 }
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +40,34 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<PasswordEntry> _passwords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData(); // โหลดข้อมูลทันทีที่เปิดแอป
+  }
+
+  // --- ระบบจัดการข้อมูล (Storage) ---
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? data = prefs.getString('saved_passwords');
+    if (data != null) {
+      final List decoded = jsonDecode(data);
+      setState(() {
+        _passwords.clear();
+        _passwords.addAll(decoded.map((m) => PasswordEntry.fromMap(m)).toList());
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encoded = jsonEncode(_passwords.map((p) => p.toMap()).toList());
+    await prefs.setString('saved_passwords', encoded);
+  }
+
+  // ------------------------------
 
   void _showAddDialog() {
     final titleController = TextEditingController();
@@ -63,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     password: passController.text,
                   ));
                 });
+                _saveData(); // บันทึกข้อมูลลงเครื่องทันทีที่กด Save
                 Navigator.pop(context);
               }
             },
@@ -92,19 +138,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        scrolledUnderElevation: 0,
         title: const Text("My Vault", style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: CircleAvatar(
+          IconButton(
+            icon: const CircleAvatar(
               backgroundColor: Colors.blueAccent,
-              child: IconButton(
-                icon: const Icon(Icons.add, color: Colors.white),
-                onPressed: _showAddDialog,
-              ),
+              child: Icon(Icons.add, color: Colors.white, size: 20),
             ),
+            onPressed: _showAddDialog,
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: _passwords.isEmpty
@@ -167,7 +210,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-              onPressed: () => setState(() => _passwords.remove(entry)),
+              onPressed: () {
+                setState(() => _passwords.remove(entry));
+                _saveData(); // บันทึกข้อมูลใหม่หลังจากลบ
+              },
             ),
           ],
         ),
